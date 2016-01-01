@@ -1,27 +1,49 @@
 // Get data
 
-window.onload = function() { init() };
+window.onload = function() { 
+	setupCircleVis();
+	getData();
+};
 
 var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1b_jVLEWSQFlBWvinR03Gu67ShEGZvn2DevDbFPOnq2I/pubhtml';
 
-function init() {
-  Tabletop.init( { key: public_spreadsheet_url,
-                   callback: showInfo,
-                   simpleSheet: true } )
+function getData() {
+	// Get google spreadsheet data
+	Tabletop.init( { key: public_spreadsheet_url,
+	                 callback: initVis,
+	                 simpleSheet: true } )
 }
 
-function showInfo(data, tabletop) {
-  console.log(data);
-  setupVisualizations(data);
+function initVis(data, tabletop) {
 
-  $(window).on('resize', function(){
-  	setupVisualizations(data);
-  });
+	$(window).on('resize', function(){
+		setupPieVis(data);
+	});
+
+	setupPieVis(data);
+}
+
+function setupCircleVis() {
+	// Setup circle visualization
+	// (10 circles per row = 100 circles)
+	drawRowsOfCircles(10);
+
+	d3.selectAll("circle").each(function(d,i) { 
+		var index = d3.select(this).attr("id").replace("circle", "");
+		d3.select("#text" + index).transition().delay(i * 25).style("visibility", "visible");
+		d3.select(this).transition()
+		    .ease("elastic")
+		    .duration("200")
+		    .attr("r", radius * 1.5)
+		    .style("visibility", "visible")
+		    .delay(i * 25)
+		    .each("end", resetCircle);
+	});
 }
 
 // end getting data
 
-var setupVisualizations = function(finalData) {
+var setupPieVis = function(finalData) {
 	// Interactive pie chart (d3)
 
 	d3.select("#pie-group").remove();
@@ -38,9 +60,11 @@ var setupVisualizations = function(finalData) {
 	svg.append("g")
 		.attr("class", "lines");
 
-	var width = $(window).width(),
+	var width = $(window).width() / 2,
 	    height = $(window).height(),
 		radius = Math.min(width, height) / 3;
+
+	$(".pie").height(height);
 
 	var pie = d3.layout.pie()
 		.sort(null)
@@ -81,7 +105,7 @@ var setupVisualizations = function(finalData) {
 
 	var color = d3.scale.ordinal()
 		.domain(["Female", "Male"])
-		.range(["#a05d56", "#d0743c"]);
+		.range(["lightpink", "lightblue"]);
 
 	function randomData (){
 		var labels = color.domain();
@@ -97,6 +121,10 @@ var setupVisualizations = function(finalData) {
 
 
 	function change(data) {
+
+		/////////////////////////////////////////////////////////
+		// PIECHART CHANGES
+		/////////////////////////////////////////////////////////
 
 		/* ------- PIE SLICES -------*/
 		var slice = svg.select(".slices").selectAll("path.slice")
@@ -197,9 +225,14 @@ var setupVisualizations = function(finalData) {
 	    svg.select("#pie-company")
 	    	.transition()
 	    	.text(data[0].company);
+
+    	/////////////////////////////////////////////////////////
+    	// CIRCLE-VISUALIZATION CHANGES
+    	/////////////////////////////////////////////////////////
+    	updateCircles(femalePercent);
 	             
 	};
 
-	// end interactive pie chart
+	// end changes
 };
 

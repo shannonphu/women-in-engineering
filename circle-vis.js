@@ -1,26 +1,26 @@
 var radius, textOffsetY;
 var drawRowsOfCircles = function(numRows) {
-		var width = $(window).width() * 0.97,
-		    height = $(window).height();
+		var width = $(window).width() * 0.97 / 2,
+		    height = $(window).height() - $(".header").height();
 
 		var svg = d3.select("#circle-vis")
 		    .attr("width", width)
-		    .attr("height", height);
+		    .attr("height", height)
+		    .append("g")
+		    	.attr("id", "circle-vis-group");
 
-	    svg.select("g").remove();
-
-		var numberOfButtons = 20;
+		var numberOfButtons = 10;
 		radius = width / numberOfButtons / 3;
 		textOffsetY = radius / 2;
 		var textMade = circlesMade = 0;
 
-	    function drawRow(origin_y) {
+	    function drawRow(spacing) {
 	    	var x = d3.scale.linear()
 	    	    .domain([0,numberOfButtons+1])
 	    	    .range([0,width]);
 
 	    	var buttons = d3.range(numberOfButtons).map(function(d,i) {
-	    	    return { id: i+1, x: x(i+1), y: height - numRows * radius * 2.75 + origin_y }
+	    	    return { id: i+1, x: x(i+1), y: radius * 2 + spacing }
 	    	});
 
 	    	var buttonGroup = svg
@@ -65,9 +65,8 @@ function enlargeCircle(d,i) {
     d3.select("#text"+index).transition()
         .ease("cubic-out")
         .duration("200")
-        .attr("y", textOffsetY)
-        .attr("font-size", radius * 2)
-        .attr("fill", "white");
+        .attr("y", textOffsetY * 1.5)
+        .attr("font-size", radius * 2);
 };
 
 function resetCircle(d,i) {
@@ -86,19 +85,17 @@ function resetCircle(d,i) {
         .attr("fill", "blue");
 }; 
 
-$(document).ready(function() {
-	drawRowsOfCircles(5);
-
-	d3.selectAll("circle").each(function(d,i) { 
-		var index = d3.select(this).attr("id").replace("circle", "");
-		d3.select("#text" + index).transition().delay(i * 25).style("visibility", "visible");
-		d3.select(this).transition()
-		    .ease("elastic")
-		    .duration("500")
-		    .attr("r", radius * 1.5)
-		    .style("visibility", "visible")
-		    .delay(i * 25)
-		    .each("end", resetCircle);
-
-	});
-});
+function updateCircles(women) {
+		var numWomen = Math.floor(parseFloat(women));
+		d3.select("#circle-vis").selectAll("text")
+			.transition()
+			.duration(500)
+			.attr("fill", "blue");
+		for (var i = 99; i > 99 - numWomen; i--) {
+			console.log(i);
+			d3.select("#text" + i)
+				.transition()
+			    .duration(500)
+			    .attr("fill", "red");
+		};
+}
