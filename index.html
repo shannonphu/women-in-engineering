@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- Foundation Libraries -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" rel="stylesheet" type="text/css" />
+	<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" rel="stylesheet" type="text/css" /> -->
 	<!--[if lt IE 9]>
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
 	  <script src="https://s3.amazonaws.com/nwapi/nwmatcher/nwmatcher-1.2.5-min.js"></script>
@@ -24,22 +24,65 @@
 </head>
 <body>
 
-	<h1 class="ui header" id="title">
-		<div class="row"><i class="plug icon"></i>Women in Engineering</div>
-	</h1>
+	<div class="ui top demo sidebar ui segment overlay invisible">
+	  <div class="ui center aligned page grid">
+	    <div class="one column row">
+	      <div class="sixteen wide column">
+	        <h3 class="ui header">Company Name</h3>
+	      </div>
+	    </div>
+	    <div class="three column divided row">
 
-	<div class="ui two column stackable grid">
-		<h2 class="ui header" id="company">
-			<div class="row"></div>
-		</h2>
+	      <div class="column">
+	        <h1>1,000</h1>
+	        <h4>Engineers</h4>
+	      </div>
 
-		<div class="column circle">
-			<svg id="circle-vis"></svg>
+	      <div class="column">
+	        <i class="plane huge icon"></i><h1>5</h1>
+	      </div>
+	      <div class="column">
+	        <i class="plane huge icon"></i><h1>5</h1>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="ui bottom demo horizontal inverted sidebar labeled icon menu">
+		<a class="item left aligned"><i class="code icon"></i>Developer</a>
+		<a class="item"><i class="info circle icon"></i>Company Info</a>
+		<a class="item right aligned"><i class="bar chart icon"></i>Source</a>
+	</div>
+
+	<div class="pusher">
+
+		<i class="asterisk huge loading icon"></i>
+
+		<button id="pause-button" class="circular ui icon button right floated">
+		  <i class="pause icon"></i>
+		</button>
+		<button id="settings-button" class="circular ui icon button right floated">
+		  <i class="search icon"></i>
+		</button>
+		
+		<h1 class="ui header" id="title">
+			<div class="row"><i class="plug icon"></i>Women in Engineering</div>
+		</h1>
+
+		<div class="ui two column stackable grid">
+			<h2 class="ui header" id="company">
+				<div class="row"></div>
+			</h2>
+
+			<div class="column circle">
+				<svg id="circle-vis"></svg>
+			</div>
+
+			<div class="column pie" style="height:100%;">
+				<svg id="pie-chart"></svg>
+			</div>
 		</div>
-
-		<div class="column pie" style="height:100%;">
-			<svg id="pie-chart"></svg>
-		</div>
+	
 	</div>
 
 	<style> 
@@ -62,8 +105,9 @@
 	#title {
 		text-align: center;
 		font-size: 4rem;
+		border-bottom: 5px dotted purple;
+		margin: 0;
 		padding: 0.2em;
-		border-bottom: 1px solid purple;
 	}
 
 	#company {
@@ -72,12 +116,17 @@
 		padding: 0.5rem;
 	}
 
+	.ui.grid {
+		margin: 1.5em 0;
+	}
+
 	</style>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.js" charset="utf-8"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.4.2/tabletop.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
 
 	<script src="circle-vis.js"></script>
 	<script src="piechart.js"></script>

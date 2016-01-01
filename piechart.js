@@ -55,6 +55,7 @@ var setupPieVis = function(finalData) {
 	// Interactive pie chart (d3)
 
 	d3.select("#pie-group").remove();
+	$("#pause-button").find("i").removeClass("play").addClass("pause");
 
 
 	var svg = d3.select("#pie-chart")
@@ -234,5 +235,30 @@ var setupPieVis = function(finalData) {
 	};
 
 	// end changes
+
+	// Sidebar and pausing functionalities
+
+	$("#settings-button").click(function(){
+		$('.sidebar').sidebar('toggle');
+		pause();
+	});
+
+	$("#pause-button").click(function(){
+		var iTag = $(this).find("i");
+		if (iTag.hasClass("pause")) {
+			pause();
+		}
+		else {
+			changeIntervalCall = setInterval(function() { change(randomData()); }, 1500);
+			iTag.removeClass("play").addClass("pause");
+		}
+	});
+
+	function pause() {
+		clearInterval(changeIntervalCall);
+		$("#pause-button").find("i").removeClass("pause").addClass("play");
+	}
+
+	// end sidebar and pausing functionalities
 };
 

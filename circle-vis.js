@@ -106,7 +106,6 @@ function updateCircles(women) {
 			.duration(500)
 			.attr("fill", MALE_BACKGROUND);
 		for (var i = 99; i > 99 - numWomen; i--) {
-			console.log(i);
 			d3.select("#circle" + i)
 				.transition()
 			    .duration(500)
