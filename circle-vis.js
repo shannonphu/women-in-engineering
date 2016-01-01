@@ -1,8 +1,19 @@
+// CIRCLE-VIS COLORS
+var MALE_BACKGROUND = "lightblue",
+	FEMALE_BACKGROUND = "pink",
+	MALE_ACCENT = "blue",
+	FEMALE_ACCENT = "red"
+	CIRCLE_LOADING_COLOR = "lavender";
+// end colors
+
 var radius, textOffsetY;
 var drawRowsOfCircles = function(numRows) {
-		var width = $(window).width() * 0.97 / 2,
-		    height = $(window).height() - $(".header").height();
+		var width = $(window).width();
+		if (width > 760) 
+			width = $(window).width() * 0.95 / 2;
+		var height = $(window).height() - $(".header").height();
 
+		d3.select("#circle-vis-group").remove();
 		var svg = d3.select("#circle-vis")
 		    .attr("width", width)
 		    .attr("height", height)
@@ -33,7 +44,7 @@ var drawRowsOfCircles = function(numRows) {
 
 	    	buttonGroup.append("circle")
 	    	    .attr("r", radius)
-	    	    .attr("fill", 'lightblue')
+	    	    .attr("fill", MALE_BACKGROUND)
 	    	    .attr("cursor", "pointer")
 	    	    .attr("id", function(d) { return "circle" + circlesMade++; })
 	    	    .on("mouseover", enlargeCircle)
@@ -81,8 +92,7 @@ function resetCircle(d,i) {
         .duration("400")
         .delay("100")
         .attr("y", textOffsetY)
-        .attr("font-size", radius * 1.4)
-        .attr("fill", "blue");
+        .attr("font-size", radius * 1.4);
 }; 
 
 function updateCircles(women) {
@@ -90,12 +100,20 @@ function updateCircles(women) {
 		d3.select("#circle-vis").selectAll("text")
 			.transition()
 			.duration(500)
-			.attr("fill", "blue");
+			.attr("fill", MALE_ACCENT);
+		d3.select("#circle-vis").selectAll("circle")
+			.transition()
+			.duration(500)
+			.attr("fill", MALE_BACKGROUND);
 		for (var i = 99; i > 99 - numWomen; i--) {
 			console.log(i);
+			d3.select("#circle" + i)
+				.transition()
+			    .duration(500)
+			    .attr("fill", FEMALE_BACKGROUND);
 			d3.select("#text" + i)
 				.transition()
 			    .duration(500)
-			    .attr("fill", "red");
+			    .attr("fill", FEMALE_ACCENT);
 		};
 }

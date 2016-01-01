@@ -1,11 +1,11 @@
 // Get data
 
 window.onload = function() { 
-	setupCircleVis();
 	getData();
 };
 
 var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1b_jVLEWSQFlBWvinR03Gu67ShEGZvn2DevDbFPOnq2I/pubhtml';
+var changeIntervalCall;
 
 function getData() {
 	// Get google spreadsheet data
@@ -15,15 +15,15 @@ function getData() {
 }
 
 function initVis(data, tabletop) {
+	setupCircleVis(data);
 
 	$(window).on('resize', function(){
+		clearInterval(changeIntervalCall);
 		setupPieVis(data);
 	});
-
-	setupPieVis(data);
 }
 
-function setupCircleVis() {
+function setupCircleVis(data) {
 	// Setup circle visualization
 	// (10 circles per row = 100 circles)
 	drawRowsOfCircles(10);
@@ -31,14 +31,22 @@ function setupCircleVis() {
 	d3.selectAll("circle").each(function(d,i) { 
 		var index = d3.select(this).attr("id").replace("circle", "");
 		d3.select("#text" + index).transition().delay(i * 25).style("visibility", "visible");
-		d3.select(this).transition()
+		d3.select(this)
+			.transition()
 		    .ease("elastic")
 		    .duration("200")
-		    .attr("r", radius * 1.5)
+		    .attr("r", radius * 1.4)
 		    .style("visibility", "visible")
-		    .delay(i * 25)
+		    .attr("fill", CIRCLE_LOADING_COLOR)
+		    .delay(function() { 
+		    	if (i == 99)
+	    				setTimeout(function() { setupPieVis(data); }, 2000)
+		    	return i * 25; 
+		    })
 		    .each("end", resetCircle);
 	});
+
+
 }
 
 // end getting data
@@ -60,8 +68,11 @@ var setupPieVis = function(finalData) {
 	svg.append("g")
 		.attr("class", "lines");
 
-	var width = $(window).width() / 2,
-	    height = $(window).height(),
+	var width = $(window).width();
+	if (width > 760) 
+		width /= 2;
+
+	var height = $(window).height(),
 		radius = Math.min(width, height) / 3;
 
 	$(".pie").height(height);
@@ -93,14 +104,6 @@ var setupPieVis = function(finalData) {
 	    .text("")
 	    	.style("font-size", "2.5em");
 
-	// Add company name outside pie
-	svg.append("text")
-		.attr("id", "pie-company")
-		.attr("x", -origin_x / 1.1)
-		.attr("y", -height / 4.2)
-	    .text("company")
-	    	.style("font-size", "2em");
-
 	var key = function(d){ return d.data.label; };
 
 	var color = d3.scale.ordinal()
@@ -116,8 +119,7 @@ var setupPieVis = function(finalData) {
 		});
 	}
 
-	change(randomData());
-	setInterval(function() { change(randomData()); }, 1500);
+	changeIntervalCall = setInterval(function() { change(randomData()); }, 1500);
 
 
 	function change(data) {
@@ -222,9 +224,7 @@ var setupPieVis = function(finalData) {
 	         .text(femalePercent);
 
 	    /* --------- COMPANY NAME ----------- */
-	    svg.select("#pie-company")
-	    	.transition()
-	    	.text(data[0].company);
+	    $("#company").text(data[0].company);
 
     	/////////////////////////////////////////////////////////
     	// CIRCLE-VISUALIZATION CHANGES
