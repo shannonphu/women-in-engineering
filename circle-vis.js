@@ -1,9 +1,9 @@
 // CIRCLE-VIS COLORS
 var MALE_BACKGROUND = "lightblue",
-	FEMALE_BACKGROUND = "pink",
-	MALE_ACCENT = "blue",
-	FEMALE_ACCENT = "red"
-	CIRCLE_LOADING_COLOR = "lavender";
+	FEMALE_BACKGROUND = "lightcoral",
+	MALE_ACCENT = "navy",
+	FEMALE_ACCENT = "#330000"
+	CIRCLE_LOADING_COLOR = "darkslategray";
 // end colors
 
 var radius, textOffsetY;
@@ -53,6 +53,7 @@ var drawRowsOfCircles = function(numRows) {
 
 	    	buttonGroup.append('text')
 	    			    .attr('font-family', 'Icons')
+					    .attr("fill", 'white')
 	    			    .attr('font-size', radius * 1.4)
 	    			    .attr("text-anchor", "middle")
 	    			    .attr("y", textOffsetY).
@@ -100,7 +101,8 @@ function updateCircles(women) {
 		d3.select("#circle-vis").selectAll("text")
 			.transition()
 			.duration(500)
-			.attr("fill", MALE_ACCENT);
+			.attr("fill", MALE_ACCENT)
+			.text(function(d) { return '\uf183' });
 		d3.select("#circle-vis").selectAll("circle")
 			.transition()
 			.duration(500)
@@ -113,6 +115,7 @@ function updateCircles(women) {
 			d3.select("#text" + i)
 				.transition()
 			    .duration(500)
-			    .attr("fill", FEMALE_ACCENT);
+			    .attr("fill", FEMALE_ACCENT)
+			    .text(function(d) { return '\uf182' });
 		};
 }

@@ -1,6 +1,11 @@
 // Get data
 
 window.onload = function() { 
+	$('.ui.dimmer')
+	  .dimmer({
+	  	opacity: 0.5
+	  });
+	$('.ui.dimmer').dimmer('show');
 	getData();
 };
 
@@ -12,16 +17,17 @@ function getData() {
 	Tabletop.init( { key: public_spreadsheet_url,
 	                 callback: initVis,
 	                 simpleSheet: true } )
-}
+};
 
 function initVis(data, tabletop) {
 	setupCircleVis(data);
 
 	$(window).on('resize', function(){
+		$('.ui.dimmer').dimmer('show');
 		clearInterval(changeIntervalCall);
 		setupPieVis(data);
 	});
-}
+};
 
 function setupCircleVis(data) {
 	// Setup circle visualization
@@ -45,9 +51,7 @@ function setupCircleVis(data) {
 		    })
 		    .each("end", resetCircle);
 	});
-
-
-}
+};
 
 // end getting data
 
@@ -109,19 +113,20 @@ var setupPieVis = function(finalData) {
 
 	var color = d3.scale.ordinal()
 		.domain(["Female", "Male"])
-		.range(["lightpink", "lightblue"]);
+		.range([FEMALE_BACKGROUND, MALE_BACKGROUND]);
 
 	function randomData (){
 		var labels = color.domain();
 		return labels.map(function(label) {
 			var index = Math.floor(Math.random() * finalData.length);
-			var percentage = parseFloat(finalData[index].percent_female_eng) / 100;
-			return { label: label, value: percentage, company:finalData[index].company }
+			var curr = finalData[index];
+			var percentage = parseFloat(curr.percent_female_eng) / 100;
+			return { label: label, value: percentage, full_data: curr }
 		});
 	}
 
 	changeIntervalCall = setInterval(function() { change(randomData()); }, 1500);
-
+	$('.ui.dimmer').dimmer('hide');
 
 	function change(data) {
 
@@ -225,13 +230,26 @@ var setupPieVis = function(finalData) {
 	         .text(femalePercent);
 
 	    /* --------- COMPANY NAME ----------- */
-	    $("#company").text(data[0].company);
+	    $("#company").text(data[0].full_data.company);
 
     	/////////////////////////////////////////////////////////
     	// CIRCLE-VISUALIZATION CHANGES
     	/////////////////////////////////////////////////////////
+
     	updateCircles(femalePercent);
-	             
+
+    	/////////////////////////////////////////////////////////
+    	// OVERLAY CHANGES
+    	/////////////////////////////////////////////////////////
+
+    	var currData = data[0].full_data;
+
+    	// Load current company's data into top overlay
+    	$("#company-detail-name").text(currData.company);
+    	$("#num_eng").text(currData.num_eng);
+    	$("#num_male").text(currData.num_eng - currData.num_female_eng);
+    	$("#num_fem").text(currData.num_female_eng);
+    	$("#percent_fem").text(currData.percent_female_eng.substr(0, currData.percent_female_eng.indexOf('.'))  + "%");             
 	};
 
 	// end changes
